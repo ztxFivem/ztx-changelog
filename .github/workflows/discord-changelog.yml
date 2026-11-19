@@ -1,0 +1,21 @@
+# Neuer Eintrag in einer .md-Datei → automatisch in den Discord-Kanal #changelog posten.
+# Benötigt das Secret DISCORD_CHANGELOG_WEBHOOK und die Variable DISCORD_UPDATES_ROLE (Rolle „Updates“).
+name: Changelog in Discord posten
+on:
+  push:
+    branches: [main]
+    paths: ['*.md']
+jobs:
+  discord:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node .github/scripts/discord-changelog.js --files
+        env:
+          WEBHOOK: ${{ secrets.DISCORD_CHANGELOG_WEBHOOK }}
+          ROLE: ${{ vars.DISCORD_UPDATES_ROLE }}
